@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}
+  Последние обновления на сайте
+{% endblock title %}
+{% block contents %}
+<p> <iframe src="https://radiovera.ru/player/" frameborder="0" height="120" width="600"></iframe> </p>
+{% include 'includes/switcher.html' %}
+  {% for post in page_obj %}
+    {% include 'includes/posts.html' with show_link='True' %}
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  {% include 'includes/pages_html.html' %}
+{% endblock %}
