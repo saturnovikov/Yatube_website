@@ -45,7 +45,6 @@ class PostURLTest(TestCase):
                                         kwargs={'post_id': cls.post.id}),
                    }
 
-
     def test_uses_correct_status_code(self):
         """Проверка доступности страниц."""
         for key in self.url:

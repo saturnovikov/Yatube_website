@@ -103,9 +103,11 @@ class ImgTestCase(TestCase):
         """
         posts_count = Post.objects.count()
 
-        # приветствую, Виталий! вопрос: можешь обьяснить, пожалуйста, почему если переменную uploaded
+        # приветствую, Виталий! вопрос: можешь обьяснить, пожалуйста, почему
+        # если переменную uploaded
         # не прописывать в этой функции, а взять self.uploaded
-        # и втсавить в form_data( 'image': self.uploaded), то пост не создается?
+        # и втсавить в form_data( 'image': self.uploaded), то пост
+        # не создается?
 
         uploaded = SimpleUploadedFile(
             name='small_2.gif',

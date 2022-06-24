@@ -91,7 +91,7 @@ class FollowTestCase(TestCase):
         )
 
         # Проверка отписки от автора
-        response_unfollow = self.authorized_client.get(
+        self.authorized_client.get(
             self.urls['profile_unfollow'])
         print('quantity after subscription deletion')
         quantity_after_subscription_deletion = Follow.objects.count()

@@ -34,10 +34,10 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts_list = author.posts.all()
     page_obj = paginator(posts_list, request)
-    following=False
-    if request.user.is_authenticated == True:
+    following = False
+    if request.user.is_authenticated is True:
         number_following = Follow.objects.filter(user=request.user,
-                                             author=author.id)
+                                                 author=author.id)
         if len(number_following) > 0:
             following = True
     template = 'posts/profile.html'

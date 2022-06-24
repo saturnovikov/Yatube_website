@@ -126,7 +126,7 @@ class PostViewsTest(BaseTestCase):
 
         self.assertEqual(response.context.get('group').title,
                          'title_test')
-        
+
         self.assertEqual(len(response.context.get(
             'page_obj')), self.number_of_posts)
 

@@ -7,6 +7,7 @@ from posts.models import Post
 
 User = get_user_model()
 
+
 class CacheTestCase(TestCase):
     """Класс для тестирования кеша для главной страницы."""
 
@@ -29,7 +30,7 @@ class CacheTestCase(TestCase):
         url = reverse('posts:index')
         Post.objects.create(text='text_2', author=self.user)
         response_1 = self.authorized_client.get(url)
-        
+
         Post.objects.get(pk=1).delete()
         response_2 = self.authorized_client.get(url)
 
