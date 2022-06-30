@@ -54,6 +54,9 @@ class PaginatorTestCase(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.user_follower = User.objects.create_user(username='follower_user')
+        cls.authorized_client_follower = Client()
+        cls.authorized_client_follower.force_login(cls.user_follower)
         cls.NUMBER_OF_POST = 15
         for x in range(cls.NUMBER_OF_POST):
             cls.post = Post.objects.create(
@@ -69,6 +72,7 @@ class PaginatorTestCase(BaseTestCase):
             'index': self.urls['index'],
             'group_posts': self.urls['group_posts'],
             'profile': self.urls['profile'],
+            'profile_follow': reverse('posts:follow_index'),
         }
 
     def test_correct_paginator(self):
@@ -76,12 +80,22 @@ class PaginatorTestCase(BaseTestCase):
         cache.clear()
         NUMBER_OF_POSTS_ON_SECOND_PAGE = self.NUMBER_OF_POST - (
             settings.NUM_OF_POSTS_PAGE)
+        url_follow = reverse('posts:profile_follow', args=[self.user])
+        self.authorized_client_follower.get(url_follow)
 
         for key in self.urls_paginator:
             with self.subTest(reverse=key):
-                response_1 = self.guest_client.get(self.urls_paginator[key])
-                response_2 = self.guest_client.get(
-                    self.urls_paginator[key] + '?page=2')
+                if key != 'profile_follow':
+                    response_1 = self.guest_client.get(
+                        self.urls_paginator[key])
+                    response_2 = self.guest_client.get(
+                        self.urls_paginator[key] + '?page=2')
+                else:
+                    response_1 = self.authorized_client_follower.get(
+                        self.urls_paginator[key])
+                    response_2 = self.authorized_client_follower.get(
+                        self.urls_paginator[key] + '?page=2')
+
                 self.assertEqual(len(response_1.context.get(
                     'page_obj')), settings.NUM_OF_POSTS_PAGE)
                 self.assertEqual(len(response_2.context['page_obj']),
@@ -89,7 +103,7 @@ class PaginatorTestCase(BaseTestCase):
 
 
 class PostViewsTest(BaseTestCase):
-    @classmethod
+    @ classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.post = Post.objects.create(

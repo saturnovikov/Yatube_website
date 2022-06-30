@@ -38,14 +38,7 @@
       <div class="card my-4">
         <h5 class="card-header">Добавить комментарий:</h5>
         <div class="card-body">
-          <!-- action ведет на обработчик формы  -->
           <form method="post" action="{% url 'posts:add_comment' post.pk %}">
-            <!-- не забываем генерировать токен!  -->
-            {% comment %} <input type="hidden" name="csrfmiddlewaretoken" value="">      
-            <div class="form-group mb-2">
-              <textarea name="text" cols="40" rows="10" class="form-control" required id="id_text">
-              </textarea>
-            </div> {% endcomment %}
             {% csrf_token %}
             {% include 'includes/forms.html' %}
             <div class="d-flex justify-content-end">

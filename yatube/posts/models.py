@@ -70,6 +70,10 @@ class Comment (models.Model):
     created = models.DateTimeField('Дата публикации комментария',
                                    auto_now_add=True)
 
+    class Meta:
+        verbose_name = ('Комментарий')
+        verbose_name_plural = ('Комментарии')
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -86,3 +90,11 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following'
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="user_author")
+        ]
+        verbose_name = ('Подписки')
+        verbose_name_plural = ('Подписки')

@@ -29,13 +29,15 @@ class CacheTestCase(TestCase):
         """тест для проверки кеширования главной страницы."""
         url = reverse('posts:index')
         Post.objects.create(text='text_2', author=self.user)
-        response_1 = self.authorized_client.get(url)
+        response_before_deletion = self.authorized_client.get(url)
 
         Post.objects.get(pk=1).delete()
-        response_2 = self.authorized_client.get(url)
+        response_after_deletion = self.authorized_client.get(url)
 
-        self.assertEqual(response_1.content, response_2.content)
+        self.assertEqual(response_before_deletion.content,
+                         response_after_deletion.content)
 
         cache.clear()
-        response_3 = self.authorized_client.get(url)
-        self.assertNotEqual(response_1.content, response_3.content)
+        response_after_cache = self.authorized_client.get(url)
+        self.assertNotEqual(
+            response_before_deletion.content, response_after_cache.content)

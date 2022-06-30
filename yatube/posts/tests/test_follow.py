@@ -49,51 +49,63 @@ class FollowTestCase(TestCase):
                                         kwargs={'username': self.user_author})
         }
 
-    def test_create_and_delete_following(self):
-        """Проверка подписки на автора, удаление подписки."""
-        null_post = 0
+    def test_authorization_client_following(self):
+        """Авторизованный пользователь может подписаться."""
+        user_id = self.user_authorization_follower.id
+        author_id = self.user_author.id
 
-        # Проверка, что подписка на автора работает
         quantity_before_subscription = Follow.objects.count()
 
-        self.authorized_client.get(self.urls['profile_follow'])
-        print('quantity after subscription')
+        response_authorization_client = self.authorized_client.get(
+            self.urls['profile_follow'])
         quantity_after_subscription = Follow.objects.count()
+
+        self.assertEqual(response_authorization_client.status_code,
+                         HTTPStatus.FOUND)
         self.assertEqual(quantity_before_subscription,
                          quantity_after_subscription - 1)
-        response_guest = self.guest_client.get(self.urls['profile_follow'])
-        self.assertEqual(response_guest.status_code, HTTPStatus.FOUND)
 
-        # Проверка, что посты появляются в ленте тех кто подписан на автора
+        self.assertEqual(Follow.objects.all()[0].user_id,
+                         user_id)
+        self.assertEqual(Follow.objects.all()[0].author_id,
+                         author_id)
+
+    def test_guest_client_no_following(self):
+        """Неавторизованный пользователь не может подписаться."""
+        quantity_before_subscription = Follow.objects.count()
+
+        response_guest_client = self.guest_client.get(
+            self.urls['profile_follow'])
+
+        quantity_after_subscription = Follow.objects.count()
+
+        self.assertEqual(quantity_before_subscription,
+                         quantity_after_subscription)
+
+    def test_create_post_follow(self):
+        """Посты появляются в ленте тех кто подписан на автора."""
+        text_post = 'text_post_test'
         response_follow = self.authorized_client.get(
-            self.urls['index_follow'])
-        response_author = self.authorized_client_author.get(
-            self.urls['index_follow'])
-
-        self.assertEqual(len(response_author.context.get('page_obj')),
-                         null_post)
-        self.assertEqual(len(response_follow.context.get('page_obj')),
-                         self.check_post_user_author)
-
-        # Проверка,что новый пост появляется в ленте тех кто подписан на автора
-        text_post = 'new_text'
-        Post.objects.create(author=self.user_author,
-                            text=text_post)
-        response_follow_1 = self.authorized_client.get(
-            self.urls['index_follow'])
-        response_author_1 = self.authorized_client_author.get(
-            self.urls['index_follow'])
-        self.assertEqual(
-            response_follow_1.context.get('page_obj')[0].text,
-            text_post)
-        self.assertEqual(
-            len(response_author_1.context.get('page_obj')), null_post
+            self.urls['profile_follow'])
+        Post.objects.create(
+            author=self.user_author,
+            text=text_post,
         )
+        response = self.authorized_client.get(self.urls['index_follow'])
+        self.assertEqual(response.context.get('page_obj')[0].text,
+                         text_post)
 
-        # Проверка отписки от автора
-        self.authorized_client.get(
-            self.urls['profile_unfollow'])
-        print('quantity after subscription deletion')
-        quantity_after_subscription_deletion = Follow.objects.count()
-        self.assertEquals(quantity_after_subscription - 1,
-                          quantity_after_subscription_deletion)
+    def test_no_create_post_follow(self):
+        """Посты не появляются в ленте тех кто не подписан на автора."""
+        text_post = 'text_post_test'
+
+        response_follow = self.authorized_client.get(
+            self.urls['profile_follow'])
+        Post.objects.create(
+            author=self.user_authorization,
+            text=text_post,
+        )
+        response = self.authorized_client.get(self.urls['index_follow'])
+
+        self.assertNotEqual(response.context.get('page_obj')[0].text,
+                            text_post)

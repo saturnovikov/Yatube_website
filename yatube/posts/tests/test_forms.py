@@ -90,3 +90,20 @@ class FormsTestCase(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(post_count_before_request, post_count_after_request)
         self.assertRedirects(response, '/auth/login/?next=/posts/1/edit/')
+
+    def test_form_comment(self):
+        """Проверка формы для комментария."""
+        name_form = 'CommentForm'
+        form_data = {'text': 'text_comment'}
+        url_post_detail = reverse('posts:post_detail',
+                                  kwargs={'post_id': self.post.id})
+        url_add_comment = reverse('posts:add_comment',
+                                  kwargs={'post_id': self.post.id})
+
+        response_post_detail = self.authorized_client.get(url_post_detail)
+        response_add_comment = self.authorized_client.post(
+            url_add_comment, data=form_data)
+
+        self.assertEqual(response_post_detail.context.get(
+            'form').__class__.__name__, name_form)
+        self.assertEqual(response_add_comment.status_code, HTTPStatus.FOUND)
