@@ -74,8 +74,7 @@ class FollowTestCase(TestCase):
         """Неавторизованный пользователь не может подписаться."""
         quantity_before_subscription = Follow.objects.count()
 
-        response_guest_client = self.guest_client.get(
-            self.urls['profile_follow'])
+        self.guest_client.get(self.urls['profile_follow'])
 
         quantity_after_subscription = Follow.objects.count()
 
@@ -85,8 +84,7 @@ class FollowTestCase(TestCase):
     def test_create_post_follow(self):
         """Посты появляются в ленте тех кто подписан на автора."""
         text_post = 'text_post_test'
-        response_follow = self.authorized_client.get(
-            self.urls['profile_follow'])
+        self.authorized_client.get(self.urls['profile_follow'])
         Post.objects.create(
             author=self.user_author,
             text=text_post,
@@ -99,8 +97,7 @@ class FollowTestCase(TestCase):
         """Посты не появляются в ленте тех кто не подписан на автора."""
         text_post = 'text_post_test'
 
-        response_follow = self.authorized_client.get(
-            self.urls['profile_follow'])
+        self.authorized_client.get(self.urls['profile_follow'])
         Post.objects.create(
             author=self.user_authorization,
             text=text_post,
