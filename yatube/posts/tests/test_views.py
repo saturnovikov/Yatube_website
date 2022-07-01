@@ -103,7 +103,7 @@ class PaginatorTestCase(BaseTestCase):
 
 
 class PostViewsTest(BaseTestCase):
-    @ classmethod
+    @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.post = Post.objects.create(
