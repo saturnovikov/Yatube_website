@@ -34,13 +34,13 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     posts_list = author.posts.all()
     page_obj = paginator(posts_list, request)
-    following = request.user.is_authenticated and Follow.objects.filter(
+    dfollowing = request.user.is_authenticated and Follow.objects.filter(
         user=request.user, author=author.id).exists()
     template = 'posts/profile.html'
     context = {
         'author': author,
         'page_obj': page_obj,
-        'following': following,
+        'following': dfollowing,
     }
     return render(request, template, context)
 
