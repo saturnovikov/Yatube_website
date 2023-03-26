@@ -11,8 +11,8 @@
 1. Клонировать репозитрий и перейти в него в командной строке:
 
 ```
-    $git clone 
-    $cd api_final_yatube
+    $git clone github.com/saturnovikov/Yatube_website
+    $cd Yatube_website
 ```
 
 2. Создать и активировать виртуалье окружение:
